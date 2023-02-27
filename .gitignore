@@ -1,0 +1,7 @@
+# Project exclude paths
+/commons-parent/common-core/target/
+/commons-parent/common-mysql/target/
+/commons-parent/common-rabbitmq/target/
+/commons-parent/common-web/target/
+/order-service/target/
+/payment-service/target/

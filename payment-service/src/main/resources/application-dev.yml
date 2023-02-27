@@ -1,0 +1,76 @@
+server:
+  port: 9999
+
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: nacos.service.lruri.love
+
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+    locale: zh_CN
+
+  rabbitmq:
+    host: public.service.lruri.love
+    port: 5672
+    username: admin
+    password: admin
+    # 设置虚拟主机
+    virtual-host: delay-order
+    connection-timeout: 15000
+    # 用来配置消息发送到交换器之后是否触发回调方法
+    publisher-confirm-type: correlated
+    # 触发路由失败消息的回调
+    publisher-returns: true
+    template:
+      # 必须设置成true 消息路由失败通知监听者，而不是将消息丢弃
+      mandatory: true
+    listener:
+      simple:
+        # 每次从RabbitMQ获取的消息数量(限流)
+        prefetch: 1
+        default-requeue-rejected: false
+        # 每个队列启动的消费者数量
+        concurrency: 1
+        # 每个队列最大的消费者数量
+        max-concurrency: 1
+        # 手动确认
+        acknowledge-mode: manual
+
+# 微信支付相关参数
+wechat-pay:
+  # 商户号 
+  mch-id: 1635488033
+  # 商户API证书序列号
+  mch-serial-no: 7702FCB04D3F0C1A660CF78BFFBB94706D6AB15B
+  # 商户私钥文件
+  private-key-path: payment-service/apiclient_key.pem
+  # APIv3密钥
+  api-v3-key: kL7zG4eM8gF4bV6dR9eP0lZ8lP7aR8uB
+  # 微信服务器地址
+  domain: https://api.mch.weixin.qq.com
+  # 接收结果通知地址
+  # 注意：每次重新启动ngrok，都需要根据实际情况修改这个配置
+  notify-domain: http://nat.lruri.com
+  # 微信公众号开发者ID(AppID)
+  appid: wxd6f1d58831498289
+
+ali-pay:
+  # app-id
+  app-id: 2021003166643013
+  # 商户私钥
+  merchant-private-key: MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDhKfJFB52UiGp4XvADghxPiQotFacQHsDiVMQK9p1jtJbw2eInQoU2lDDlVwibs3yhNRjDiQOOYSRuZBdhPufg+GlZmUkyFQv0Pl+fYnEA0YwETCYsIJQn16e/BH+zb4zKMhJr4r07mkSnd74ZxJCkjKTM/rA5FUwLYhT/kQHga1GrvfjCqV8TQAnca16p3xJF7p/jviFrqSqeafA8INkJXNvUiKdfnvw7lgbMBmbzxupkVMGGX98qRa/lgLEyzyDZAAL0upZ7WZan16yoEiMBlUoIQGgzIXgdEyVVbl5/Q4xoBVVZLSa/1PiEpYp2XRsM3D1XGL2UNueZGIFnKkl7AgMBAAECggEBAMPwo8KMgQXLvJNpUoZLCGXyRGe9avdtO775suwzdf1ZHu0TPmmZyqEXToGVPol4JSGIOjeWmQCi6ngiI/JdMp4krlDpQrgRdqiiSsZBfUMQFz96INHPu/37/h8NRC+bCDLAZiV6V+BxPANcAZMc6h43wgYeMK5MKTPSs6E+yBpIyBqTbFPM9jIuO7dOsIYcnAnZeDZvsIYwqHbqkn8yXnxH2asvtRVKm3xOjayMXz2j4oQSPdBkYXanfkhEM8CfWYfOD2X6LaqPHrYLE8he/ux/5RpsYPOROUPiVfOklJite6kJs9S+NIGN5b3Eo4CgLMlinKvXKGP+I7bfxfuYSukCgYEA8Cz3/r1U9IaYu/Q8Yqci+IopXjEst97tKhN5FgGJxcpglDkVoVcmCPOInu4sjjB892wkqfllpHfQlqwG+5dKoGmwbY4fZZEpjmvPuZfBhaDPEJG/HoTXB+AqH6DU31FkKXJ8Gi+1yuHdoVUHjDl/DhTsWBQ/bIhBiL9LMOZVfq8CgYEA7//GM5aoTFWzKyy/eGHkV4GP6V9BrsImbsxYxmYAdbj9O0fl2HQ2tdW34qzEEEe1H2d4cDOOMsPn0HLqj9k+EB7EE1+7NhCKcIop8HjAg6+8xLQiR+0LEQVz/KSIJqsKxOgXK+8bfFlX2SD//bhp6RG0luX6Bny+77Hk/lNLtPUCgYEAkTnfyv0Y/bLVb/FDAjQmBTslwHrjm1sE9UhJE3FiqWKx+255EdHsgcUge1lxP5k6NzIBCXZwa363diQXJNJaoZzGvbgObA/WnPO763FD51VRX6eBdSbGD1EQp4dMsKw6cIV1XTA0MLVamk8b/UJW/WDReIDlyO6rEdD52lusnqkCgYB7Ubb7TR+fUa3lsnGUHuDg4e8boFm0vYhYCGJZV5JG604bht8gsN5n4rBBJjr8jowP3e/x31vi0+0qm9HRJnSQfe6McfVVW3x3RVc1fCaXw9ZAULsIsFGuZlnp6HUZQWwgL42wgoViCNpt9Fn1eivZmcJsgzFM4g6ORZ9/2zccfQKBgEOjWfkozuFg5Pl61MsQs2b88oWO1p53i8O1czTlhKUVj7o0ltpUDzZUxyOzeRLyuB2kSPB5IWf8jF9Zl5TQCT+QWcGOfV4evu4DjjWep5cLmu8Vhur29+E4WnVQuXmNLysFHjyMeEHvVEyW2gUqDJqGT78MszumqmTbctcmRZLT
+  # 支付宝公钥
+  alipay-public-key: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyZFrk4cpFY8Jwy/lzzx2fEdGwM83HjnDEDqbttJsTmXCcvQWBdScy5ncfQBMO2+3ZESEu2ZLSLI+TMCYcb2gFsFZ+f9GJt4rWTy02emDWqC7i0Q5bhBCu3h5AejXthZNAW4UOPyx2GGllegRZQYp400xwbFfxJufAArO5f7xqKf8aIgxVVgionTcMqclj4dEvApmcaw9w8axM2k74wPfhcMdXN/WBM7AB8FpxJaxe6dKPOg+E8sEitwvHjtoQcAAZlYriK0lHAzKFDnB6X/E2D8DoMvhgOuMkhYgWFbG9LSYBxUyzNFqm5/S6dMRa2DYIxLS2uNNo7RM4q5X83dOVwIDAQAB
+  # 异步通知地址
+  notify-url: http://nat.lruri.com/payment/notify/ali/trade
+  # 同步跳转的页面
+  return-url: https://lruri.com/
+  # 签名方式
+  sign-type: RSA2
+  # 字符编码
+  charset: utf-8
+  # 网关地址
+  gateway-url: https://openapi.alipay.com/gateway.do
